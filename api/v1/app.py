@@ -5,6 +5,7 @@ from flask import jsonify
 from models import storage
 from api.v1.views import app_views
 import os
+import sys
 
 
 app = Flask(__name__)
@@ -23,7 +24,9 @@ def apptd(self):
 @app.errorhandler(404)
 def page_not_found(e):
     """ custom json 404 """
-    return jsonify(error="Not Found"), 404
+    print("Error 404", file=sys.stderr)
+    return jsonify(error="Not found"), 404
+
 
 if __name__ == "__main__":
     host = os.getenv("HBNB_API_HOST")
@@ -31,5 +34,5 @@ if __name__ == "__main__":
     if host is None:
         host = "0.0.0.0"
     if port is None:
-        host = "5000"
+        port = "5000"
     app.run(host, port, threaded=True)
