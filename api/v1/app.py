@@ -25,7 +25,7 @@ def apptd(self):
 def page_not_found(e):
     """ custom json 404 """
     print("Error 404", file=sys.stderr)
-    return jsonify(error="Not Found"), 404
+    return jsonify(error="Not found"), 404
 
 
 if __name__ == "__main__":
