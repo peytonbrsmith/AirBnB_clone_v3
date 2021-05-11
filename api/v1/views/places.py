@@ -72,6 +72,9 @@ def update_place(id):
     if request.is_json:
         dontupdate = ["id", "created_at", "updated_at", "user_id",
                       "city_id"]
+        get_user = storage.get(User, id)
+        if get_user is None:
+            abort(404)
         place_json = request.get_json()
         storage.delete(get_place)
         for k, v in place_json.items():

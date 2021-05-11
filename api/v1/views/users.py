@@ -59,7 +59,7 @@ def update_User(id):
     if get_User is None:
         abort(404)
     if request.is_json:
-        dontupdate = ["id", "created_at", "updated_at"]
+        dontupdate = ["id", "created_at", "updated_at", "email"]
         User_json = request.get_json()
         storage.delete(get_User)
         for k, v in User_json.items():
