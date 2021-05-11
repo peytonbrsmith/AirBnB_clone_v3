@@ -21,15 +21,16 @@ def all_amenities():
 
 
 @app_views.route('/amenities/<string:id>/', methods=["GET"])
-def amenities(id, strict_slashes=False):
+@app_views.route('/amenities/<string:id>', methods=["GET"])
+def amenities(id):
     get_id = storage.get(Amenity, id)
     if get_id is None:
         abort(404)
     return (jsonify(get_id.to_dict()))
 
 
-@app_views.route('/amenities/<string:id>', methods=["DELETE"])
-def delete_amenities(id):
+@app_views.route('/amenities/<string:id>/', methods=["DELETE"])
+def delete_amenities(id, strict_slashes=False):
     get_id = storage.get(Amenity, id)
     if get_id is None:
         abort(404)
@@ -38,16 +39,14 @@ def delete_amenities(id):
     return {}, 200
 
 
-@app_views.route('/states/<string:id>/amenities/', methods=["POST"])
-def create_amenities(id, strict_slashes=False):
+@app_views.route('/amenities/', methods=["POST"])
+@app_views.route('/amenities', methods=["POST"])
+def create_amenities():
     if request.is_json:
         amenities_json = request.get_json()
         if amenities_json.get("name") is None:
             abort(400, description="Missing name")
         else:
-            if storage.get(Amenity, id) is None:
-                abort(404)
-            amenities_json["state_id"] = id
             new_amenities = Amenity(**amenities_json)
             storage.new(new_amenities)
             storage.save()
