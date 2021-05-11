@@ -42,7 +42,7 @@ def delete_city(id):
     return {}, 200
 
 
-@app_views.route('/states/<string:id>/cities', methods=["POST"])
+@app_views.route('/states/<string:id>/cities/', methods=["POST"])
 def create_city(id, strict_slashes=False):
     if request.is_json:
         city_json = request.get_json()
