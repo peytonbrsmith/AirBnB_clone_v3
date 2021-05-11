@@ -30,7 +30,8 @@ def amenities(id):
 
 
 @app_views.route('/amenities/<string:id>/', methods=["DELETE"])
-def delete_amenities(id, strict_slashes=False):
+@app_views.route('/amenities/<string:id>', methods=["DELETE"])
+def delete_amenities(id):
     get_id = storage.get(Amenity, id)
     if get_id is None:
         abort(404)
