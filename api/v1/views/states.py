@@ -9,7 +9,8 @@ from flask import jsonify, abort, request
 
 
 @app_views.route('/states/', methods=["GET"])
-def all_states(strict_slashes=False):
+@app_views.route('/states', methods=["GET"])
+def all_states():
     all_states_li = []
     for value in storage.all(State).values():
         all_states_li.append(value.to_dict())
@@ -48,6 +49,7 @@ def create_state(strict_slashes=False):
             return new_state.to_dict(), 201
     else:
         abort(400, description="Not a JSON")
+
 
 @app_views.route('/states/<string:id>', methods=["PUT"])
 def update_state(id):
