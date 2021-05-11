@@ -10,7 +10,7 @@ import json
 from flask import jsonify, abort, request
 
 
-@app_views.route('/states/<string:id>/amenities/', methods=["GET"])
+@app_views.route('/amenities/', methods=["GET"])
 def state_amenities(id, strict_slashes=False):
     get_id = storage.get(Amenity, id)
     if get_id is None:
