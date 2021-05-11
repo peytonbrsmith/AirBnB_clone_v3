@@ -11,17 +11,12 @@ from flask import jsonify, abort, request
 
 
 @app_views.route('/amenities/', methods=["GET"])
-def state_amenities(id, strict_slashes=False):
-    get_id = storage.get(Amenity, id)
-    if get_id is None:
-        abort(404)
-    if get_id.amenities is None:
-        abort(404)
-    else:
-        amenities = get_id.amenities
-        new_list = []
-        for amenity in amenities:
-            new_list.append(amenity.to_dict())
+@app_views.route('/amenities', methods=["GET"])
+def all_amenities():
+    amenities = storage.all(Amenity).values()
+    new_list = []
+    for amenity in amenities:
+        new_list.append(amenity.to_dict())
     return (jsonify(new_list))
 
 
