@@ -3,31 +3,36 @@
 
 from api.v1.views import app_views
 from models.state import State
+from models.city import City
 from models import storage
 import json
 from flask import jsonify, abort, request
 
 
-@app_views.route('/states/', methods=["GET"])
-@app_views.route('/states', methods=["GET"])
-def all_states():
-    all_states_li = []
-    for value in storage.all(State).values():
-        all_states_li.append(value.to_dict())
-    return (jsonify(all_states_li))
-
-
 @app_views.route('/states/<string:id>/cities', methods=["GET"])
 def state_cities(id):
     get_id = storage.get(State, id)
-    if get_id.cities is None:
+    if get_id.cities is None or len(get_id.cities) == 0:
         abort(404)
-    return (jsonify(get_id.cities))
+    else:
+        cities = get_id.cities
+        new_list = []
+        for city in cities:
+            new_list.append(city.to_dict())
+    return (jsonify(new_list))
 
 
-@app_views.route('/states/<string:id>', methods=["DELETE"])
-def delete_state(id):
-    get_id = storage.get(State, id)
+@app_views.route('/cities/<string:id>', methods=["GET"])
+def city(id):
+    get_id = storage.get(City, id)
+    if get_id is None:
+        abort(404)
+    return (jsonify(get_id.to_dict()))
+
+
+@app_views.route('/cities/<string:id>', methods=["DELETE"])
+def delete_city(id):
+    get_id = storage.get(City, id)
     if get_id is None:
         abort(404)
     storage.delete(get_id)
@@ -35,36 +40,38 @@ def delete_state(id):
     return {}, 200
 
 
-@app_views.route('/states/', methods=["POST"])
-def create_state(strict_slashes=False):
+@app_views.route('/states/<string:id>/cities', methods=["POST"])
+def create_city(id, strict_slashes=False):
     if request.is_json:
-        state_json = request.get_json()
-        if state_json.get("name") is None:
+        city_json = request.get_json()
+        if city_json.get("name") is None:
             abort(400, description="Missing name")
         else:
-            new_state = State(**state_json)
-            id = new_state.id
-            storage.new(new_state)
+            if storage.get(State, id) is None:
+                abort(404)
+            city_json["state_id"] = id
+            new_city = City(**city_json)
+            storage.new(new_city)
             storage.save()
-            return new_state.to_dict(), 201
+            return new_city.to_dict(), 201
     else:
         abort(400, description="Not a JSON")
 
 
-@app_views.route('/states/<string:id>', methods=["PUT"])
-def update_state(id):
-    get_state = storage.get(State, id)
-    if get_state is None:
+@app_views.route('/cities/<string:id>', methods=["PUT"])
+def update_city(id):
+    get_city = storage.get(City, id)
+    if get_city is None:
         abort(404)
     if request.is_json:
         dontupdate = ["id", "created_at", "updated_at"]
-        state_json = request.get_json()
-        storage.delete(get_state)
-        for k, v in state_json.items():
-            if state_json[k] not in dontupdate:
-                setattr(get_state, k, v)
-        storage.new(get_state)
+        city_json = request.get_json()
+        storage.delete(get_city)
+        for k, v in city_json.items():
+            if city_json[k] not in dontupdate:
+                setattr(get_city, k, v)
+        storage.new(get_city)
         storage.save()
-        return get_state.to_dict(), 200
+        return get_city.to_dict(), 200
     else:
         abort(400, description="Not a JSON")
