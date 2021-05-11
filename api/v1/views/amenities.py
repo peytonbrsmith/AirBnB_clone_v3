@@ -10,8 +10,8 @@ import json
 from flask import jsonify, abort, request
 
 
-@app_views.route('/states/<string:id>/amenities', methods=["GET"])
-def state_amenities(id):
+@app_views.route('/states/<string:id>/amenities/', methods=["GET"])
+def state_amenities(id, strict_slashes=False):
     get_id = storage.get(Amenity, id)
     if get_id is None:
         abort(404)
@@ -25,8 +25,8 @@ def state_amenities(id):
     return (jsonify(new_list))
 
 
-@app_views.route('/amenities/<string:id>', methods=["GET"])
-def amenities(id):
+@app_views.route('/amenities/<string:id>/', methods=["GET"])
+def amenities(id, strict_slashes=False):
     get_id = storage.get(Amenity, id)
     if get_id is None:
         abort(404)
