@@ -12,7 +12,9 @@ from flask import jsonify, abort, request
 @app_views.route('/states/<string:id>/cities', methods=["GET"])
 def state_cities(id):
     get_id = storage.get(State, id)
-    if get_id.cities is None or len(get_id.cities) == 0:
+    if get_id is None:
+        abort(404)
+    if get_id.cities is None:
         abort(404)
     else:
         cities = get_id.cities
